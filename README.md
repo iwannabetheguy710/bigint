@@ -1,4 +1,26 @@
 # BigInt: A light-weight big integer library utility
-## Features
-* Language support:
-	* Pascal (simply supported compare, +, -, \*, div, mod operator)
+## Language suport
+<details>
+<summary>Pascal (simply supported compare, +, -, *, /, mod)</summary>
+```pas
+program test;
+uses crt, bigint;
+
+var a, b: string;
+
+begin
+  clrscr;
+
+  readln(a);
+  readln(b);
+
+  writeln('a + b = ', bigadd(a, b)); { + }
+  writeln('a - b = ', bigsub(a, b)); { - }
+  writeln('a * b = ', bigmul(a, b)); { * }
+  writeln('a / b = ', bigdiv(a, b)); { / }
+  writeln('a % b = ', bigmod(a, b)); { mod }
+
+  readkey;
+end.
+```
+</details>
