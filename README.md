@@ -1,6 +1,4 @@
 # BigInt: A light-weight big integer library utility
----
-
-### Features
+## Features
 * Language support
 	* Pascal
