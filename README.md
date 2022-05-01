@@ -1,4 +1,4 @@
-# BigInt: A light-weight big integer library utility
+# BigInt: A lightweight big integer library for multiple language
 ## Language suport
 * ### Pascal (simply supported compare, +, -, *, /, mod)
 ```pas
