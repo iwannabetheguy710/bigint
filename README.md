@@ -1,6 +1,6 @@
 # BigInt: A light-weight big integer library utility
 ## Language suport
-#### * Pascal (simply supported compare, +, -, *, /, mod)
+* #### Pascal (simply supported compare, +, -, *, /, mod)
 ```pas
 program test;
 uses crt, bigint;
