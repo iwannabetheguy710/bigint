@@ -41,9 +41,27 @@ begin
 end;
 
 function bigadd(a, b: string): string;
-var sum, carry, i, x, y: integer;
+var sum, carry, i, x, y, signa, signb, cr: integer;
     c: string;
 begin
+  signa := 1; signb := 1;
+  if a[1] = '-' then begin
+    signa := -1;
+    delete(a, 1, 1);
+  end;
+  if b[1] = '-' then begin
+    signb := -1;
+    delete(b, 1, 1);
+  end;
+  if signa <> signb then begin
+    cr := bigcompare(a, b);
+    if cr = 0 then exit('0');
+    if cr = -1 then begin
+      if signb = -1 then exit('-' + bigsub(b, a))
+      else exit(bigsub(b, a));
+    end;
+    if cr = 1 then exit('-' + bigsub(a, b));
+  end;
   carry := 0; c := '';
   while length(a) < length(b) do a := '0' + a;
   while length(a) > length(b) do b := '0' + b;
@@ -55,13 +73,30 @@ begin
     c := chr(sum mod 10 + 48) + c;
   end;
   if carry > 0 then c := '1' + c;
+  if (signa = -1) and (signb = -1) then c := '-' + c;
   bigadd := c;
 end;
 
 function bigsub(a, b: string): string;
 var c: string;
-    s, bor, i: integer;
+    s, bor, i, signa, signb, cr: integer;
 begin
+  signa := 1; signb := 1;
+  if a[1] = '-' then begin
+    signa := -1;
+    delete(a, 1, 1);
+  end;
+  if b[1] = '-' then begin
+    signb := -1;
+    delete(b, 1, 1);
+  end;
+  if signa <> signb then begin
+    if signa = -1 then exit('-' + bigadd(a, b));
+    if signb = -1 then exit(bigadd(a, b));
+  end
+  else if (signa = -1) and (signb = -1) then exit(bigsub(b, a));
+  cr := bigcompare(a, b);
+  if cr = -1 then exit('-' + bigsub(b, a));
   bor := 0; c := '';
   while length(a) < length(b) do a := '0' + a;
   while length(a) > length(b) do b := '0' + b;
@@ -80,10 +115,19 @@ end;
 
 { core version of bigmul by multiply a bigstring with a longint }
 function bigmul_(a: string; b: longint): string;
-var i: integer;
+var i, signa, signb: integer;
     car, s: longint;
     c, tmp: string;
 begin
+  signa := 1; signb := 1;
+  if b < 0 then begin
+    signb := -1;
+    b := b * -1;
+  end;
+  if a[1] = '-' then begin
+    signa := -1;
+    delete(a, 1, 1);
+  end;
   c := '';
   car := 0;
   for i := length(a) downto 1 do begin
@@ -92,13 +136,24 @@ begin
     c := chr(s mod 10 + 48) + c;
   end;
   if car > 0 then str(car, tmp) else tmp := '';
-  bigmul_ := tmp + c;
+  tmp := tmp + c;
+  if signa <> signb then tmp := '-' + tmp;
+  bigmul_ := tmp;
 end;
 
 function bigmul(a, b: string): string;
 var sum, tmp: string;
-    m, i, j: integer;
+    m, i, j, signa, signb: integer;
 begin
+  signa := 1; signb := 1;
+  if a[1] = '-' then begin
+    signa := -1;
+    delete(a, 1, 1);
+  end;
+  if b[1] = '-' then begin
+    signb := -1;
+    delete(b, 1, 1);
+  end;
   m := -1; sum := '';
   for i := length(a) downto 1 do begin
     inc(m);
@@ -106,6 +161,7 @@ begin
     for j := 1 to m do tmp := tmp + '0';
     sum := bigadd(tmp, sum);
   end;
+  if signa <> signb then sum := '-' + sum;
   bigmul := sum;
 end;
 
@@ -113,7 +169,17 @@ end;
 function bigdiv_(a: string; b: longint): string;
 var s, i, hold: longint;
     c: string;
+    signa, signb: integer;
 begin
+  signa := 1; signb := 1;
+  if a[1] = '-' then begin
+    signa := -1;
+    delete(a, 1, 1);
+  end;
+  if b < 0 then begin
+    signb := -1;
+    b := b * -1;
+  end;
   hold := 0; s := 0; c := '';
   for i := 1 to length(a) do begin
     hold := hold * 10 + ord(a[i]) - 48;
@@ -122,6 +188,7 @@ begin
     c := c + chr(s + 48);
   end;
   while (length(c) > 1) and (c[1] = '0') do delete(c, 1, 1);
+  if signa <> signb then c := '-' + c;
   bigdiv_ := c;
 end;
 
@@ -129,7 +196,16 @@ function bigdiv(a, b: string): string;
 var c, hold: string;
     kb: array[0..10] of string;
     i, k: longint;
+    signa, signb: integer;
 begin
+  if a[1] = '-' then begin
+    signa := -1;
+    delete(a, 1, 1);
+  end;
+  if b[1] = '-' then begin
+    signb := -1;
+    delete(b, 1, 1);
+  end;
   kb[0] := '0';
   for i := 1 to 10 do
     kb[i] := bigadd(kb[i - 1], b);
@@ -143,6 +219,7 @@ begin
     hold := bigsub(hold, kb[k - 1]);
   end;
   while (length(c) > 1) and (c[1] = '0') do delete(c, 1, 1);
+  if signa <> signb then c := '-' + c;
   bigdiv := c;
 end;
 
